@@ -15,17 +15,34 @@ app.get("/pdf", async (req, res) => {
   await webPage.goto(url, {
       waitUntil: "networkidle0"
   });
+  let path = 'pdf/'+Math.random()+'.pdf';
+  const pdf = await webPage.pdf({
+      path: path,
+      printBackground: true,
+      format: "A4",
+      margin: {
+          top: "20px",
+          bottom: "40px",
+          left: "20px",
+          right: "20px"
+      }
+  });
 
-  const pdf = await webPage.pdf(
-    { path: 'pdf'+Math.random()+'.pdf', format: 'A4' }
-  );
+  
 
   await browser.close();
 
-  res.contentType("application/pdf");
-  res.send(pdf);
-  
+  res.contentType("application/json");
+  res.send({
+    path: req.protocol + '://' + req.get('host')+'/download?path='+path
+  });
 })
+
+app.get('/download', function(req, res){
+  let path = req.query.path
+  const file = `${__dirname}/`+path;
+  res.download(file); // Set disposition and send it.
+});
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
