@@ -1,18 +1,30 @@
 const express = require('express')
 const app = express()
 const port = 3030
+const puppeteer = require("puppeteer");
 
-app.set('view engine', 'pug');
-app.set('views','./views');
+app.get("/pdf", async (req, res) => {
+  const url = req.query.target;
 
-app.get('/', (req, res) => {
-    res.render('welcome');
-})
+  const browser = await puppeteer.launch({
+      headless: true
+  });
 
-app.get('/profile', (req, res) => {
-    
-    res.render('profile', {user: 'Agus'});
+  const webPage = await browser.newPage();
 
+  await webPage.goto(url, {
+      waitUntil: "networkidle0"
+  });
+
+  const pdf = await webPage.pdf(
+    { path: 'pdf'+Math.random()+'.pdf', format: 'A4' }
+  );
+
+  await browser.close();
+
+  res.contentType("application/pdf");
+  res.send(pdf);
+  
 })
 
 app.listen(port, () => {
