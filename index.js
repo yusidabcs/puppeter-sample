@@ -1,6 +1,6 @@
 const express = require('express')
 const app = express()
-const port = 3030
+const port = process.env.PORT || 5000;
 const puppeteer = require("puppeteer");
 
 app.get("/pdf", async (req, res) => {
@@ -24,9 +24,9 @@ app.get("/pdf", async (req, res) => {
 
   res.contentType("application/pdf");
   res.send(pdf);
-
+  
 })
 
-app.listen(process.env.PORT, () => {
-  console.log(`Example app listening at http://localhost:${process.env.PORT}`)
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`)
 })
