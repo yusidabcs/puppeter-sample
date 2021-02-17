@@ -9,9 +9,7 @@ app.use(cors())
 app.get("/pdf", async (req, res) => {
   const url = req.query.target;
 
-  const browser = await puppeteer.launch({
-      headless: true
-  });
+  const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
 
   const webPage = await browser.newPage();
 
