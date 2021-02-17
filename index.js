@@ -2,6 +2,9 @@ const express = require('express')
 const app = express()
 const port = process.env.PORT || 5000;
 const puppeteer = require("puppeteer");
+var cors = require('cors')
+
+app.use(cors())
 
 app.get("/pdf", async (req, res) => {
   const url = req.query.target;
