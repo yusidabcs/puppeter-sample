@@ -14,7 +14,7 @@ services:
       - "443:443"
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
     networks:
-      - karirpedia_frontend
+      - app-network
   certbot:
     image: certbot/certbot
     restart: unless-stopped
@@ -23,12 +23,12 @@ services:
       - ./data/certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
     networks:
-      - karirpedia_frontend
+      - app-network
 
   nodejs:
     build: ./
     networks:
-      - karirpedia_frontend
+      - app-network
     environment:
       - NODE_ENV=production
       - MYSQL_HOST=kp-mysql-app
@@ -44,8 +44,8 @@ services:
     ports:
       - "5000:5000"
       - "9229:9229"
-    container_name: kp-nodejs-app
+    container_name: nodejsapp
 
 networks:
-    karirpedia_frontend:
-      external: true
+  app-network:
+    driver: bridge
