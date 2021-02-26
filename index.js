@@ -16,7 +16,7 @@ app.get("/pdf", async (req, res) => {
   await webPage.goto(url, {
       waitUntil: "networkidle0"
   });
-  let path = '/pdf/'+Math.random()+'.pdf';
+  let path = '/usr/src/app/'+Math.random()+'.pdf';
   const pdf = await webPage.pdf({
       path: path,
       printBackground: true,
