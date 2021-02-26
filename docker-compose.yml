@@ -38,6 +38,7 @@ services:
       - SECRET=INIRAHASIAKU
     volumes:
       - ./:/usr/src/app
+      - ./pdf:/usr/src/app/pdf
       - /usr/src/app/node_modules
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
