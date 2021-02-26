@@ -1,0 +1,51 @@
+version: "3.2"
+services:
+  nginx:
+    image: nginx:1.15-alpine
+    restart: unless-stopped
+    container_name: pdf-nginx
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+      - ./:/var/www/
+    ports:
+      - "80:80"
+      - "443:443"
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    networks:
+      - karirpedia_frontend
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - karirpedia_frontend
+
+  nodejs:
+    build: ./
+    networks:
+      - karirpedia_frontend
+    environment:
+      - NODE_ENV=production
+      - MYSQL_HOST=kp-mysql-app
+      - MYSQL_USER=karirpedia
+      - MYSQL_PASS=balicsnet2314
+      - MYSQL_DB=karirpedia
+      - SECRET=INIRAHASIAKU
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    ports:
+      - "5000:5000"
+      - "9229:9229"
+    container_name: kp-nodejs-app
+
+networks:
+    karirpedia_frontend:
+      external: true
