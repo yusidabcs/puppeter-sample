@@ -37,7 +37,7 @@ app.get("/pdf", async (req, res) => {
 
   res.contentType("application/json");
   res.send({
-    path: req.protocol + '://' + req.get('host')+'/download?path='+path_temp
+    path:  'https://' + req.get('host')+'/download?path='+path_temp
   });
 })
 
